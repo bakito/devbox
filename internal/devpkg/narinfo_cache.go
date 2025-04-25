@@ -22,10 +22,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// binaryCache is the store from which to fetch this package's binaries.
-// It is used as FromStore in builtins.fetchClosure.
-const binaryCaches = "https://cache.nixos.org"
-
 // useDefaultOutputs is a special value for the outputName parameter of
 // fetchNarInfoStatusOnce, which indicates that the default outputs should be
 // used.
@@ -321,7 +317,7 @@ func fetchNarInfoStatusFromS3(
 var nixCacheIsConfigured = goutil.OnceValueWithContext(nixcache.IsConfigured)
 
 func readCaches(ctx context.Context) ([]string, error) {
-	cacheURIs := []string{envir.GetValueOrDefault(envir.DevboxNixCache, binaryCaches)}
+	cacheURIs := []string{envir.GetValueOrDefault(envir.DevboxNixCache, envir.DevboxNixCacheDefault)}
 	if !nixCacheIsConfigured.Do(ctx) {
 		return cacheURIs, nil
 	}

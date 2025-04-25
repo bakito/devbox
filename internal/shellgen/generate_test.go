@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"go.jetify.com/devbox/internal/devpkg"
+	"go.jetify.com/devbox/internal/envir"
 	"go.jetify.com/devbox/internal/lock"
 	"go.jetify.com/devbox/internal/searcher"
 	"go.jetify.com/devbox/nix/flake"
@@ -118,7 +119,7 @@ var (
 			},
 		},
 		System:   "x86_64-linux",
-		NiXStore: "https://cache.nixos.org",
+		NiXStore: envir.DevboxNixCacheDefault,
 	}
 )
 

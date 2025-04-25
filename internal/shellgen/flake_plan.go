@@ -53,7 +53,7 @@ func newFlakePlan(ctx context.Context, devbox devboxer) (*flakePlan, error) {
 		Stdenv:      devbox.Lockfile().Stdenv(),
 		Packages:    packages,
 		System:      nix.System(),
-		NiXStore:    envir.GetValueOrDefault(envir.DevboxNixCache, "https://cache.nixos.org"),
+		NiXStore:    envir.GetValueOrDefault(envir.DevboxNixCache, envir.DevboxNixCacheDefault),
 	}, nil
 }
 

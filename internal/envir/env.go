@@ -26,6 +26,10 @@ const (
 	XDGConfigHome = "XDG_CONFIG_HOME"
 	XDGCacheHome  = "XDG_CACHE_HOME"
 	XDGStateHome  = "XDG_STATE_HOME"
+
+	// DevboxNixCacheDefault is the store from which to fetch this package's binaries.
+	// It is used as FromStore in builtins.fetchClosure.
+	DevboxNixCacheDefault = "https://cache.nixos.org"
 )
 
 // system
