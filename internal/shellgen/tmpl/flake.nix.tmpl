@@ -48,7 +48,7 @@
                 fetch anything and just use the local version. This may break
                 if user somehow removes the local store path.
               */}}
-              fromStore = "{{ .NiXStore }}";
+              fromStore = "{{ $.NiXStore }}";
               fromPath = "{{ $pkg.InputAddressedPathForOutput $output.Name }}";
               inputAddressed = true;
             }))
