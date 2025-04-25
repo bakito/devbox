@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 	"go.jetify.com/devbox/internal/debug"
 	"go.jetify.com/devbox/internal/devbox/providers/nixcache"
+	"go.jetify.com/devbox/internal/envir"
 	"go.jetify.com/devbox/internal/goutil"
 	"go.jetify.com/devbox/internal/lock"
 	"go.jetify.com/devbox/internal/nix"
@@ -23,7 +24,7 @@ import (
 
 // binaryCache is the store from which to fetch this package's binaries.
 // It is used as FromStore in builtins.fetchClosure.
-const binaryCache = "https://cache.nixos.org"
+const binaryCaches = "https://cache.nixos.org"
 
 // useDefaultOutputs is a special value for the outputName parameter of
 // fetchNarInfoStatusOnce, which indicates that the default outputs should be
@@ -320,7 +321,7 @@ func fetchNarInfoStatusFromS3(
 var nixCacheIsConfigured = goutil.OnceValueWithContext(nixcache.IsConfigured)
 
 func readCaches(ctx context.Context) ([]string, error) {
-	cacheURIs := []string{binaryCache}
+	cacheURIs := []string{envir.GetValueOrDefault(envir.DevboxNixCache, binaryCaches)}
 	if !nixCacheIsConfigured.Do(ctx) {
 		return cacheURIs, nil
 	}

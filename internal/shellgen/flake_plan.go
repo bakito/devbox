@@ -12,6 +12,7 @@ import (
 
 	"go.jetify.com/devbox/internal/build"
 	"go.jetify.com/devbox/internal/devpkg"
+	"go.jetify.com/devbox/internal/envir"
 	"go.jetify.com/devbox/internal/nix"
 	"go.jetify.com/devbox/internal/patchpkg"
 	"go.jetify.com/devbox/nix/flake"
@@ -24,6 +25,9 @@ type flakePlan struct {
 	Packages    []*devpkg.Package
 	FlakeInputs []flakeInput
 	System      string
+
+	// NixStore the nix store to be used in the Flake
+	NiXStore string
 }
 
 func newFlakePlan(ctx context.Context, devbox devboxer) (*flakePlan, error) {
@@ -49,6 +53,7 @@ func newFlakePlan(ctx context.Context, devbox devboxer) (*flakePlan, error) {
 		Stdenv:      devbox.Lockfile().Stdenv(),
 		Packages:    packages,
 		System:      nix.System(),
+		NiXStore:    envir.GetValueOrDefault(envir.DevboxNixCache, "https://cache.nixos.org"),
 	}, nil
 }
 

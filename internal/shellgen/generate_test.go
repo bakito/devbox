@@ -117,7 +117,8 @@ var (
 				},
 			},
 		},
-		System: "x86_64-linux",
+		System:   "x86_64-linux",
+		NiXStore: "https://cache.nixos.org",
 	}
 )
 
