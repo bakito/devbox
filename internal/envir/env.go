@@ -14,6 +14,7 @@ const (
 	DevboxShellEnabled   = "DEVBOX_SHELL_ENABLED"
 	DevboxShellStartTime = "DEVBOX_SHELL_START_TIME"
 	DevboxVM             = "DEVBOX_VM"
+	DevboxNixCache       = "DEVBOX_NIX_CACHE"
 
 	LauncherVersion = "LAUNCHER_VERSION"
 	LauncherPath    = "LAUNCHER_PATH"
