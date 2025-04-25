@@ -6,27 +6,8 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
-  merge_group:
-    branches:
-      - main
-  workflow_call:
-    inputs:
-      run-mac-tests:
-        type: boolean
-  workflow_dispatch:
-    inputs:
-      run-mac-tests:
-        type: boolean
-        description: Run tests on macOS
-      example-debug:
-        type: boolean
-        description: Run example tests with DEVBOX_DEBUG=1 to increase verbosity
-  schedule:
-    - cron: '30 8 * * *' # Run nightly at 8:30 UTC
+    branches: [ tests ]
 
 permissions:
   contents: read
