@@ -15,6 +15,7 @@ import (
 	"go.jetify.com/devbox/internal/boxcli/featureflag"
 	"go.jetify.com/devbox/internal/boxcli/usererr"
 	"go.jetify.com/devbox/internal/devpkg/pkgtype"
+	"go.jetify.com/devbox/internal/envir"
 	"go.jetify.com/devbox/internal/nix"
 	"go.jetify.com/devbox/internal/redact"
 	"go.jetify.com/devbox/internal/searcher"
@@ -178,7 +179,9 @@ func buildLockSystemInfos(pkg *searcher.PackageVersion) (map[string]*SystemInfo,
 		group.Go(func() error {
 			// We should use devpkg.BinaryCache here, but it'll cause a circular reference
 			// Just hardcoding for now. Maybe we should move that to nix.DefaultBinaryCache?
-			path, err := nix.StorePathFromHashPart(ctx, sysInfo.StoreHash, "https://cache.nixos.org")
+			path, err := nix.StorePathFromHashPart(ctx, sysInfo.StoreHash,
+				envir.GetValueOrDefault(envir.DevboxNixCache, envir.DevboxNixCacheDefault),
+			)
 			if err != nil {
 				// Should we report this to sentry to collect data?
 				slog.Error("failed to resolve store path", "system", sysName, "store_hash", sysInfo.StoreHash, "err", err)
