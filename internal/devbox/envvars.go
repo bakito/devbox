@@ -29,20 +29,84 @@ func exportify(vars map[string]string) string {
 	slices.Sort(keys) // for reproducibility
 
 	strb := strings.Builder{}
-	for _, k := range keys {
-		strb.WriteString("export ")
-		strb.WriteString(k)
-		strb.WriteString(`="`)
-		for _, r := range vars[k] {
+	for _, key := range keys {
+		if strings.HasPrefix(key, "BASH_FUNC_") && strings.HasSuffix(key, "%%") {
+			// Bash function
+			funcName := strings.TrimSuffix(key, "%%")
+			funcName = strings.TrimPrefix(funcName, "BASH_FUNC_")
+			strb.WriteString(funcName)
+			strb.WriteString(" ")
+			strb.WriteString(vars[key])
+			strb.WriteString("\nexport -f ")
+			strb.WriteString(funcName)
+			strb.WriteString("\n")
+		} else {
+			// Regular variable
+			strb.WriteString("export ")
+			strb.WriteString(key)
+			strb.WriteString(`="`)
+			for _, r := range vars[key] {
+				switch r {
+				// Special characters inside double quotes:
+				// https://pubs.opengroup.org/onlinepubs/009604499/utilities/xcu_chap02.html#tag_02_02_03
+				case '$', '`', '"', '\\', '\n':
+					strb.WriteRune('\\')
+				}
+				strb.WriteRune(r)
+			}
+			strb.WriteString("\";\n")
+		}
+	}
+	return strings.TrimSpace(strb.String())
+}
+
+// exportifyNushell formats vars as nushell environment variable assignments.
+// Each line is of the form `$env.KEY = "value"` with special characters escaped.
+func exportifyNushell(vars map[string]string) string {
+	// Nushell protected environment variables that cannot be set manually
+	// See: https://www.nushell.sh/book/environment.html#automatic-environment-variables
+	protectedVars := map[string]bool{
+		"CURRENT_FILE":    true,
+		"FILE_PWD":        true,
+		"LAST_EXIT_CODE":  true,
+		"CMD_DURATION_MS": true,
+		"NU_VERSION":      true,
+		"PWD":             true, // Nushell manages this automatically
+	}
+
+	keys := make([]string, len(vars))
+	i := 0
+	for k := range vars {
+		keys[i] = k
+		i++
+	}
+	slices.Sort(keys) // for reproducibility
+
+	strb := strings.Builder{}
+	for _, key := range keys {
+		// Skip bash functions for nushell
+		if strings.HasPrefix(key, "BASH_FUNC_") && strings.HasSuffix(key, "%%") {
+			continue
+		}
+
+		// Skip nushell protected environment variables
+		if protectedVars[key] {
+			continue
+		}
+
+		// Nushell environment variable syntax: $env.KEY = "value"
+		strb.WriteString("$env.")
+		strb.WriteString(key)
+		strb.WriteString(` = "`)
+		for _, r := range vars[key] {
 			switch r {
-			// Special characters inside double quotes:
-			// https://pubs.opengroup.org/onlinepubs/009604499/utilities/xcu_chap02.html#tag_02_02_03
-			case '$', '`', '"', '\\', '\n':
+			// Escape special characters for nushell double-quoted strings
+			case '"', '\\':
 				strb.WriteRune('\\')
 			}
 			strb.WriteRune(r)
 		}
-		strb.WriteString("\";\n")
+		strb.WriteString("\"\n")
 	}
 	return strings.TrimSpace(strb.String())
 }

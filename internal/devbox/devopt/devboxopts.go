@@ -34,6 +34,13 @@ type EnvFlags struct {
 	EnvFile string
 }
 
+type EnvrcOpts struct {
+	EnvFlags
+	Force     bool
+	EnvrcDir  string
+	ConfigDir string
+}
+
 type PullboxOpts struct {
 	Overwrite   bool
 	URL         string
@@ -62,10 +69,18 @@ type UpdateOpts struct {
 	IgnoreMissingPackages bool
 }
 
+type ShellFormat string
+
+const (
+	ShellFormatBash    ShellFormat = "bash"
+	ShellFormatNushell ShellFormat = "nushell"
+)
+
 type EnvExportsOpts struct {
 	EnvOptions     EnvOptions
 	NoRefreshAlias bool
 	RunHooks       bool
+	ShellFormat    ShellFormat
 }
 
 // EnvOptions configure the Devbox Environment in the `computeEnv` function.
